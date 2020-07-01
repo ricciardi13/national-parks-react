@@ -2,32 +2,32 @@ import React, { Component } from 'react';
 import './App.css';
 import Form from './Form';
 import ParkList from './ParkList'
+import Loading from './Loading';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      states: null,
       parks: [],
-      results: null
+      loading: false,
+      error : null
     }
   }
 
   parkSearch = (event) => {
     event.preventDefault();
+
+    this.setState({
+      loading : true,
+      parks:[]
+    });
+
     const states = event.target.state.value;
     const results = event.target.results.value;
     console.log(states);
     console.log(results);
 
-    this.setState({
-      states: states,
-      results: results
-    });
-  }
-
-  componentDidMount() {
-    const url = `https://developer.nps.gov/api/v1/parks?stateCode=${this.state.states}&limit=${this.state.results}&api_key=rvBOo36IQaVxFFaewQM48yiSC9LYJGAj6eFyBZE8`;
+    const url = `https://developer.nps.gov/api/v1/parks?stateCode=${states}&limit=${results}&api_key=rvBOo36IQaVxFFaewQM48yiSC9LYJGAj6eFyBZE8`;
     fetch(url)
       .then(res => {
         if(!res.ok) {
@@ -39,6 +39,7 @@ class App extends Component {
       .then(data => {
         this.setState({
           parks: data.data,
+          loading: false,
           error: null
         });
       })
@@ -47,7 +48,6 @@ class App extends Component {
           error: err.message
         });
       });
-
   }
 
   render(){
@@ -59,6 +59,7 @@ class App extends Component {
         <main>
           <Form parkSearch={this.parkSearch}  />
           <ParkList parks={this.state.parks} />
+          <Loading loading={this.state.loading}/>
         </main>
       </div>
     );
