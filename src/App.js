@@ -7,7 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      states: null,
+      states: "AZ",
       parks: [],
       results: null
     }
@@ -37,6 +37,7 @@ class App extends Component {
       })
       .then(res => res.json())
       .then(data => {
+        console.log(data);
         this.setState({
           parks: data.data,
           error: null
